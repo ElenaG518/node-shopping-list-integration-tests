@@ -57,6 +57,7 @@ describe("Recipes List", function() {
         res.body.forEach(function(item) {
           expect(item).to.be.a("object");
           expect(item).to.include.keys(expectedKeys);
+          expect(item.ingredients).to.be.a("array");
         });
       });
   })
@@ -77,6 +78,9 @@ describe("Recipes List", function() {
         expect(res.body).to.be.a("object");
         expect(res.body).to.include.keys("id", "name", "ingredients");
         expect(res.body.id).to.not.equal(null);
+        expect(res.body.name).to.be.equal(newItem.name);
+        expect(res.body.ingredients).to.be.a("array");
+        expect(res.body.ingredients).to.include.members(newItem.ingredients);
         // response should be deep equal to `newItem` from above if we assign
         // `id` to it from `res.body.id`
         expect(res.body).to.deep.equal(
@@ -108,9 +112,7 @@ describe("Recipes List", function() {
         // first have to get so we have an idea of object to update
         .get("/recipes")
         .then(function(res) {
-          console.log(res.body[0]);
           updateRecipe.id = res.body[0].id;
-          console.log(updateRecipe);
           // this will return a promise whose value will be the response
           // object, which we can inspect in the next `then` block. Note
           // that we could have used a nested callback here instead of
@@ -127,6 +129,12 @@ describe("Recipes List", function() {
           expect(res).to.have.status(200);
           expect(res).to.be.json;
           expect(res.body).to.be.a("object");
+          expect(res.body).to.include.keys("id", "name", "ingredients");
+          expect(res.body.name).to.be.equal(updateRecipe.name);
+          expect(res.body.id).to.not.equal(null);
+          expect(res.body.id).to.equal(updateRecipe.id);
+          expect(res.body.ingredients).to.be.a("array");
+          expect(res.body.ingredients).to.include.members(updateRecipe.ingredients);
           expect(res.body).to.deep.equal(updateRecipe);
         })
     );
