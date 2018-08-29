@@ -18,11 +18,13 @@ Recipes.create("milkshake", [
 
 // send back JSON representation of all recipes
 // on GET requests to root
+// when the root of this router is called with GET, return
+// all current ShoppingList items
 router.get("/", (req, res) => {
   res.json(Recipes.get());
 });
 
-// when new recipe added, ensure has required fields. if not,
+// when new recipe is posted, ensure has required fields. if not,
 // log error and return 400 status code with hepful message.
 // if okay, add new item, and return it with a status 201.
 router.post("/", (req, res) => {
@@ -43,7 +45,7 @@ router.post("/", (req, res) => {
 // Delete recipes (by id)!
 router.delete("/:id", (req, res) => {
   Recipes.delete(req.params.id);
-  console.log(`Deleted shopping list item \`${req.params.ID}\``);
+  console.log(`Deleted recipe item \`${req.params.id}\``);
   res.status(204).end();
 });
 
@@ -69,13 +71,13 @@ router.put("/:id", (req, res) => {
     console.error(message);
     return res.status(400).send(message);
   }
-  console.log(`Updating shopping list item \`${req.params.id}\``);
-  Recipes.update({
+  console.log(`Updating recipe item \`${req.params.id}\``);
+  const updatedItem = Recipes.update({
     id: req.params.id,
     name: req.body.name,
     ingredients: req.body.ingredients
-  });
-  res.status(204).end();
+  });  
+  res.status(200).json(updatedItem);
 });
 
 module.exports = router;
